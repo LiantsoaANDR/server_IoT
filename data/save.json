@@ -1,0 +1,67 @@
+[
+  {
+    "temperature": 20.6,
+    "humidite": 69.4,
+    "timestamp": "2025-07-13T23:31:24.594185"
+  },
+  {
+    "temperature": 19.4,
+    "humidite": 70,
+    "timestamp": "2025-07-13T23:32:04.914006"
+  },
+  {
+    "temperature": 19.4,
+    "humidite": 70,
+    "timestamp": "2025-07-13T23:32:50.198687"
+  },
+  {
+    "temperature": 19.4,
+    "humidite": 70,
+    "timestamp": "2025-07-13T23:33:43.102651"
+  },
+  {
+    "temperature": 19.4,
+    "humidite": 70,
+    "timestamp": "2025-07-13T23:34:13.321476"
+  },
+  {
+    "temperature": 19.4,
+    "humidite": 70,
+    "timestamp": "2025-07-13T23:34:39.231557"
+  },
+  {
+    "temperature": 19.3,
+    "humidite": 70,
+    "timestamp": "2025-07-13T23:34:56.374131"
+  },
+  {
+    "temperature": 18.5,
+    "humidite": 69.5,
+    "timestamp": "2025-07-14T09:55:33.636970"
+  },
+  {
+    "temperature": 18.8,
+    "humidite": 69.7,
+    "timestamp": "2025-07-14T09:55:48.138535"
+  },
+  {
+    "temperature": 18.8,
+    "humidite": 70.1,
+    "timestamp": "2025-07-14T09:56:14.561200"
+  },
+  {
+    "temperature": 18.8,
+    "humidite": 68.8,
+    "timestamp": "2025-07-14T09:57:21.261108"
+  },
+  {
+    "temperature": 18.9,
+    "humidite": 72.3,
+    "timestamp": "2025-07-14T09:57:59.691553"
+  },
+  {
+    "temperature": 19.1,
+    "humidite": 68,
+    "timestamp": "2025-07-14T11:46:43.264252"
+  }
+]
