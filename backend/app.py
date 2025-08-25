@@ -6,8 +6,7 @@ import json
 app = Flask(__name__, static_folder="../frontend", template_folder="../frontend")
 
 DATA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../data")
-
-
+SECRET_TOKEN = "ma_clef_secrete_123"  # <- Change ce token et garde-le secret
 
 def get_device_file(device):
     return os.path.join(DATA_FOLDER, f"{device}.json")
@@ -18,6 +17,13 @@ def receive_data():
     data = request.get_json()
     if not isinstance(data, dict) or "device" not in data:
         return jsonify({"error": "Invalid data, must include 'device'"}), 400
+
+    # Vérification du token
+    if "token" not in data or data["token"] != SECRET_TOKEN:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # Supprimer le token avant de sauvegarder
+    data.pop("token")
 
     device = data["device"]
     data['timestamp'] = datetime.now().isoformat()
@@ -56,10 +62,11 @@ def delete_file(device):
         return jsonify({"status": "deleted", "device": device}), 200
     return jsonify({"error": "File not found"}), 404
 
-# ------------------ Frontend ------------------
+# Le bloc ci-dessous est inutile avec Gunicorn et Nginx
 @app.route('/')
 def index():
     return send_from_directory(app.static_folder, "index.html")
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+# Le bloc ci-dessous est inutile avec Gunicorn et Nginx
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5000)
