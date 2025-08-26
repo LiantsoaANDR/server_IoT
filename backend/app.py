@@ -21,30 +21,23 @@ def receive_data():
     if not isinstance(data, dict) or "device" not in data:
         return jsonify({"error": "Invalid data, must include 'device'"}), 400
 
-    # Vérification du token
     if data.get("token") != SECRET_TOKEN:
         return jsonify({"error": "Unauthorized"}), 401
 
-    # Supprimer le token avant sauvegarde
     data.pop("token", None)
     data['timestamp'] = datetime.now().isoformat()
-
-    # Enregistrement dans MongoDB
     collection.insert_one(data)
 
-    # Réponse (sans ObjectId)
     return jsonify({
         "status": "success",
         "device": data["device"],
-        "data": {k: v for k, v in data.items() if k != "_id"}  # supprime _id si présent
+        "data": {k: v for k, v in data.items() if k != "_id"}
     }), 200
-
 
 @app.route('/list', methods=['GET'])
 def list_files():
     devices = collection.distinct("device")
     return jsonify(devices)
-
 
 @app.route('/download/<device>', methods=['GET'])
 def download_file(device):
@@ -58,7 +51,6 @@ def download_file(device):
         return response
     return jsonify({"error": "Device not found"}), 404
 
-
 @app.route('/delete/<device>', methods=['DELETE'])
 def delete_file(device):
     result = collection.delete_many({"device": device})
@@ -66,6 +58,32 @@ def delete_file(device):
         return jsonify({"status": "deleted", "device": device}), 200
     return jsonify({"error": "Device not found"}), 404
 
+# ------------------ NOUVEL ENDPOINT ------------------
+@app.route('/values', methods=['GET'])
+def get_values():
+    # Champs demandés
+    fields_param = request.args.get("fields")
+    if not fields_param:
+        return jsonify({"error": "Missing fields parameter"}), 400
+
+    fields = [f.strip() for f in fields_param.split(",")]
+
+    # Toujours inclure device + timestamp
+    projection = {"_id": 0, "device": 1, "timestamp": 1}
+    for f in fields:
+        projection[f] = 1
+
+    # Filtre par device si demandé
+    device = request.args.get("device")
+    query = {}
+    if device:
+        query["device"] = device
+
+    # Filtrer : au moins un des champs doit exister
+    query["$or"] = [{f: {"$exists": True}} for f in fields]
+
+    data = list(collection.find(query, projection))
+    return jsonify(data), 200
 
 # ------------------ FRONTEND ------------------
 @app.route('/')
