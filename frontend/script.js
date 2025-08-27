@@ -1,19 +1,26 @@
+let data = []
+
 async function loadFiles() {
     const response = await fetch("/list");
     const files = await response.json();
-
+    // const files = ["esp32_test","test2"]
+    data = files
+}
+function renderFiles (dataParams){   
     const container = document.getElementById("file-list");
     container.innerHTML = "";
-
-    files.forEach(file => {
+    dataParams.forEach(file => {
         const device = file.replace(".json", "");
         const div = document.createElement("div");
-
+        div.className ='line'    
         div.innerHTML = `
             <strong>${file}</strong>
-            <button onclick="viewFile('${device}')">👀 Voir</button>
-            <button onclick="downloadFile('${device}')">⬇ Télécharger</button>
-            <button onclick="confirmDelete('${device}')">🗑 Supprimer</button>
+            <div class="action">
+                <button onclick="viewFile('${device}')" class="action-button"> <img src="visualisation.png" alt="visualiser" width="20"></button>
+                <button onclick="downloadFile('${device}')" class="action-button"><img src="telecharger.png" alt="Télécharger" width="20"></button>
+                <button onclick="confirmDelete('${device}')" class="action-button"><img src="supprimer.png" alt="supprimer" width="20"></button>
+            </div>
+
         `;
         container.appendChild(div);
     });
@@ -21,7 +28,7 @@ async function loadFiles() {
 
 async function viewFile(device) {
     const response = await fetch(`/download/${device}`);
-    const text = await response.text();
+    const text = await response.text();   
     const win = window.open("", "_blank");
     win.document.body.innerHTML = `<pre>${text}</pre>`;
 }
@@ -33,6 +40,7 @@ function downloadFile(device) {
 async function deleteFile(device) {
     await fetch(`/delete/${device}`, { method: "DELETE" });
     loadFiles();
+    renderFiles(data)
 }
 
 // Ajoute cette fonction pour la confirmation
@@ -69,4 +77,24 @@ function confirmDelete(device) {
     };
 }
 
-loadFiles();
+
+//search-button
+
+
+const search = () =>{
+    const input = document.querySelector("#q")
+    const i = input.value.trim().toLowerCase()
+    let filtered=data.filter(elt =>elt.includes(i))    
+    renderFiles(filtered)
+}
+
+    const searchinput = document.querySelector("#q")
+    searchinput.oninput = () =>{
+        const query =searchinput.value.trim().toLowerCase()
+        const filtered = data.filter(elt => elt.includes(query))       
+        renderFiles(filtered)
+    }
+
+// init
+loadFiles()
+renderFiles(data);
