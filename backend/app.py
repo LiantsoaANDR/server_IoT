@@ -6,12 +6,22 @@ from pymongo import MongoClient
 app = Flask(__name__, static_folder="../frontend", template_folder="../frontend")
 
 # ------------------ CONFIGURATION ------------------
-SECRET_TOKEN = "ma_clef_secrete_123" 
+SECRET_TOKEN = "ma_clef_secrete_123"
 
 # Connexion à MongoDB
 client = MongoClient("mongodb://localhost:27017/")
 db = client.iot_db
 collection = db.device_data
+
+# ------------------ Helpers ------------------
+def device_json_and_size(device: str):
+    """Retourne (data_list, size_bytes) pour un device.
+    La taille est celle du JSON formaté comme /download (indent=2, UTF-8)."""
+    data = list(collection.find({"device": device}, {"_id": 0}))
+    payload = json.dumps(data, indent=2, ensure_ascii=False)
+    size_bytes = len(payload.encode("utf-8"))
+    return data, size_bytes
+
 
 # ------------------ API ------------------
 @app.route('/data', methods=['POST'])
@@ -34,22 +44,30 @@ def receive_data():
         "data": {k: v for k, v in data.items() if k != "_id"}
     }), 200
 
+
 @app.route('/list', methods=['GET'])
 def list_files():
+    """Retourne une liste d'objets {device, size} attendue par le frontend."""
     devices = collection.distinct("device")
-    return jsonify(devices)
+    results = []
+    for dev in devices:
+        _, size_bytes = device_json_and_size(dev)
+        results.append({"device": dev, "size": size_bytes})
+    return jsonify(results), 200
+
 
 @app.route('/download/<device>', methods=['GET'])
 def download_file(device):
     data = list(collection.find({"device": device}, {"_id": 0}))
     if data:
         response = Response(
-            json.dumps(data, indent=2),
+            json.dumps(data, indent=2, ensure_ascii=False),
             mimetype='application/json'
         )
         response.headers["Content-Disposition"] = f"attachment; filename={device}.json"
         return response
     return jsonify({"error": "Device not found"}), 404
+
 
 @app.route('/delete/<device>', methods=['DELETE'])
 def delete_file(device):
@@ -57,6 +75,7 @@ def delete_file(device):
     if result.deleted_count > 0:
         return jsonify({"status": "deleted", "device": device}), 200
     return jsonify({"error": "Device not found"}), 404
+
 
 # ------------------ NOUVEL ENDPOINT ------------------
 @app.route('/values', methods=['GET'])
@@ -84,6 +103,7 @@ def get_values():
 
     data = list(collection.find(query, projection))
     return jsonify(data), 200
+
 
 # ------------------ FRONTEND ------------------
 @app.route('/')

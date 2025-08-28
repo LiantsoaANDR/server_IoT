@@ -18,6 +18,9 @@ h1 {
     /* border: 1px solid #ddd; */
     /* border-radius: 5px; */
 }
+#file-list{
+    height: 75vh;
+}
 .line{
     /* border: 1px solid #ddd; */
     height: 40px;
@@ -98,4 +101,46 @@ cursor: pointer;
 .search-btn:hover,
 .clear-btn:hover {
 background: #f9fafb;
+}
+
+
+.navigation{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .5rem;
+    margin: .5rem;
+    gap: 1rem;
+
+}
+.next{
+    width:45px;
+    border: 0;
+    background-color: #9EE493;
+    border-radius: 12px;
+    cursor: pointer;
+    /* color: #9EE493; */
+    color: black;
+    height: 30px;
+    font-weight: bold;
+}
+.prec{
+    width:45px;
+    border: 0;
+    background-color: #9EE493;
+    border-radius: 12px;
+    cursor: pointer;
+    /* color: #9EE493; */
+    color: black;
+    height: 30px;
+    font-weight: bold;
+}
+.prec:hover{
+    background:#30b339;
+    color: white;
+}
+.next:hover{
+    background:#30b339;
+    color: white;
 }
