@@ -1,0 +1,7 @@
+{
+    "device":"test",
+    "temperature":25.5,
+    "vent":80,
+    "HR": 67,
+    "token":"ma_clef_secrete_123"
+}
